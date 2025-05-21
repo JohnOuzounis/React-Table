@@ -1,0 +1,124 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 15px;
+
+    width: 100%;
+    overflow-x: auto;
+}
+
+.container > table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 15px;
+    table-layout: auto;
+    min-width: max-content;
+}
+.container > table thead tr {
+    background-color: #ffffff;
+}
+.container > table tbody tr:nth-child(odd) td {
+    background-color: #eaeaea;
+}
+
+.container > table th {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 23px;
+    color: #000000;
+}
+
+.container > table td {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 23px;
+    background-color: #fcfcfc;
+    color: #000000;
+}
+
+.container > table tr td:first-child,
+.container > table tr th:first-child {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-left: 1px solid #a4a4a4;
+}
+.container > table tr td:last-child,
+.container > table tr th:last-child {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-right: 1px solid #a4a4a4;
+}
+
+.container > table th,
+.container > table td {
+    text-align: left;
+    padding: 10px 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.container > table tr td,
+.container > table tr th {
+    border: 1px solid #a4a4a4;
+    border-left: none;
+    border-right: none;
+}
+
+.pagination {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    gap: 30px;
+
+    width: 100%;
+}
+
+.pagination > span {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 23px;
+    color: #3e3e3e;
+    white-space: nowrap;
+}
+
+.pagination > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0px;
+    gap: 15px;
+}
+
+.pagination > div > button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    outline: none;
+    box-shadow: none;
+
+    background-color: transparent;
+    padding: 0;
+
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 23px;
+    color: #3e3e3e;
+}
+
+.pagination > div > button.currentPage {
+    font-style: bold;
+    color: var(--theme-primary);
+}
+
+.pagination > div > button > svg {
+    font-size: 20px;
+}
