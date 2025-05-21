@@ -4,7 +4,7 @@ import { FaLongArrowAltDown, FaLongArrowAltUp } from 'react-icons/fa';
 
 import styles from './Table.module.css';
 
-const Table = ({
+export const Table = ({
     description,
     data,
     onNextPage,
