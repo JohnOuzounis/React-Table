@@ -9,7 +9,9 @@ export const Table = ({
     data,
     onNextPage,
     onPrevPage,
+    onPageClick,
     totalPages: externalTotalPages,
+    totalRecords: externalTotalRecords,
     itemsPerPage = 7,
     classNames = {},
 }) => {
@@ -19,6 +21,8 @@ export const Table = ({
         key: null,
         direction: null,
     });
+
+    const isPaginated = onNextPage || onPrevPage || onPageClick;
 
     useEffect(() => {
         setTableData(data);
@@ -30,22 +34,42 @@ export const Table = ({
         );
     };
 
-    const totalPages =
-        externalTotalPages || Math.ceil(tableData.length / itemsPerPage);
+    const totalRecords = isPaginated
+        ? externalTotalRecords ?? tableData.length
+        : tableData.length;
 
-    const paginatedData = tableData.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
+    const totalPages = isPaginated
+        ? externalTotalPages ?? 1
+        : Math.ceil(totalRecords / itemsPerPage);
+
+    const paginatedData = isPaginated
+        ? tableData
+        : tableData.slice(
+              (currentPage - 1) * itemsPerPage,
+              currentPage * itemsPerPage
+          );
 
     const handlePrevPage = async () => {
-        if (onPrevPage && !(await onPrevPage())) return;
+        const prevPage = Math.max(currentPage - 1, 1);
+
+        if (prevPage === currentPage) return;
+        if (onPrevPage && !(await onPrevPage(prevPage))) return;
+
         setCurrentPage(prev => Math.max(prev - 1, 1));
     };
 
     const handleNextPage = async () => {
-        if (onNextPage && !(await onNextPage())) return;
+        const nextPage = Math.min(currentPage + 1, totalPages);
+
+        if (nextPage === currentPage) return;
+        if (onNextPage && !(await onNextPage(nextPage))) return;
+
         setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    };
+
+    const handlePageClick = async page => {
+        if (onPageClick && !(await onPageClick(page))) return;
+        setCurrentPage(page);
     };
 
     const renderSortIndicator = key => {
@@ -104,7 +128,7 @@ export const Table = ({
                             : ''
                     }`}
                     key={page}
-                    onClick={() => setCurrentPage(page)}
+                    onClick={() => handlePageClick(page)}
                 >
                     {page}
                 </button>
@@ -135,6 +159,13 @@ export const Table = ({
 
         return pages;
     };
+
+    const showingCount = isPaginated
+        ? tableData.length
+        : Math.min(
+              itemsPerPage,
+              totalRecords - (currentPage - 1) * itemsPerPage
+          );
 
     return (
         <div className={`${styles.container} ${classNames.container || ''}`}>
@@ -183,12 +214,7 @@ export const Table = ({
                 }`}
             >
                 <span>
-                    Showing{' '}
-                    {Math.min(
-                        itemsPerPage,
-                        tableData.length - (currentPage - 1) * itemsPerPage
-                    )}{' '}
-                    out of {data.length} results
+                    Showing {showingCount} out of {totalRecords} results
                 </span>
                 <div>
                     <button
