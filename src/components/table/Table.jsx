@@ -115,6 +115,60 @@ export const Table = ({
         }
     };
 
+    const renderHeader = () => {
+        return (
+            <tr>
+                {description.map((col, idx) => (
+                    <th
+                        key={idx}
+                        style={{ minWidth: col.width }}
+                        onClick={() => col.name && handleSort(col.name)}
+                    >
+                        {col.Header}
+                        {col.name && renderSortIndicator(col.name)}
+                    </th>
+                ))}
+            </tr>
+        );
+    };
+
+    const renderData = () => {
+        if (loading) return;
+
+        const noData = paginatedData.length <= 0;
+        if (noData) {
+            return (
+                <tr>
+                    <td
+                        colSpan={description.length}
+                        style={{ textAlign: 'center' }}
+                    >
+                        No data available
+                    </td>
+                </tr>
+            );
+        }
+
+        return paginatedData.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+                {description.map((col, colIndex) => (
+                    <td key={colIndex}>
+                        {col.field
+                            ? col.field({
+                                  data: row,
+                                  update: patch =>
+                                      updateRow(row.id, prevRow => ({
+                                          ...prevRow,
+                                          ...patch,
+                                      })),
+                              })
+                            : row[col.name]}
+                    </td>
+                ))}
+            </tr>
+        ));
+    };
+
     const renderPageNumbers = () => {
         const pages = [];
         const maxPagesToShow = 3;
@@ -158,78 +212,15 @@ export const Table = ({
         return pages;
     };
 
-    const showingCount = isPaginated
-        ? tableData.length
-        : Math.min(
-              itemsPerPage,
-              totalRecords - (currentPage - 1) * itemsPerPage
-          );
+    const renderPagination = () => {
+        const showingCount = isPaginated
+            ? tableData.length
+            : Math.min(
+                  itemsPerPage,
+                  totalRecords - (currentPage - 1) * itemsPerPage
+              );
 
-    return (
-        <div className={`${styles.container} ${classNames.container || ''}`}>
-            <table className='table'>
-                <thead>
-                    <tr>
-                        {description.map((col, idx) => (
-                            <th
-                                key={idx}
-                                style={{ minWidth: col.width }}
-                                onClick={() => col.name && handleSort(col.name)}
-                            >
-                                {col.Header}
-                                {col.name && renderSortIndicator(col.name)}
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {loading ? (
-                        <tr>
-                            <td
-                                colSpan={description.length}
-                                className={styles.loader}
-                            >
-                                <div className={styles['loader-dots']}>
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </div>
-                            </td>
-                        </tr>
-                    ) : paginatedData.length > 0 ? (
-                        paginatedData.map((row, rowIndex) => (
-                            <tr key={rowIndex}>
-                                {description.map((col, colIndex) => (
-                                    <td key={colIndex}>
-                                        {col.field
-                                            ? col.field({
-                                                  data: row,
-                                                  update: patch =>
-                                                      updateRow(
-                                                          row.id,
-                                                          prevRow => ({
-                                                              ...prevRow,
-                                                              ...patch,
-                                                          })
-                                                      ),
-                                              })
-                                            : row[col.name]}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td
-                                colSpan={description.length}
-                                style={{ textAlign: 'center' }}
-                            >
-                                No data available
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
+        return (
             <div
                 className={`${styles.pagination} ${
                     classNames.pagination || ''
@@ -256,6 +247,29 @@ export const Table = ({
                     </button>
                 </div>
             </div>
+        );
+    };
+
+    const renderLoader = () => {
+        return (
+            <div className={styles.loader}>
+                <div className={styles['loader-dots']}>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <div className={`${styles.container} ${classNames.container || ''}`}>
+            <table className='table'>
+                <thead>{renderHeader()}</thead>
+                <tbody>{renderData()}</tbody>
+            </table>
+            {loading && renderLoader()}
+            {renderPagination()}
         </div>
     );
 };
