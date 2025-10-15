@@ -14,6 +14,7 @@ export const Table = ({
     totalRecords: externalTotalRecords,
     itemsPerPage = 7,
     classNames = {},
+    loading = false,
 }) => {
     const [tableData, setTableData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -138,10 +139,8 @@ export const Table = ({
         if (totalPages <= 7) {
             for (let i = 1; i <= totalPages; i++) addPage(i);
         } else {
-            // Show first few
             for (let i = 1; i <= maxPagesToShow; i++) addPage(i);
 
-            // Ellipsis in the middle if needed
             if (
                 currentPage > maxPagesToShow + 1 &&
                 currentPage < totalPages - maxPagesToShow
@@ -153,7 +152,6 @@ export const Table = ({
                 pages.push(<span key='dots'>...</span>);
             }
 
-            // Show last few
             for (let i = totalPages - 2; i <= totalPages; i++) addPage(i);
         }
 
@@ -185,27 +183,51 @@ export const Table = ({
                     </tr>
                 </thead>
                 <tbody>
-                    {paginatedData.map((row, rowIndex) => (
-                        <tr key={rowIndex}>
-                            {description.map((col, colIndex) => (
-                                <td key={colIndex}>
-                                    {col.field
-                                        ? col.field({
-                                              data: row,
-                                              update: patch =>
-                                                  updateRow(
-                                                      row.id,
-                                                      prevRow => ({
-                                                          ...prevRow,
-                                                          ...patch,
-                                                      })
-                                                  ),
-                                          })
-                                        : row[col.name]}
-                                </td>
-                            ))}
+                    {loading ? (
+                        <tr>
+                            <td
+                                colSpan={description.length}
+                                className={styles.loader}
+                            >
+                                <div className={styles['loader-dots']}>
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </td>
                         </tr>
-                    ))}
+                    ) : paginatedData.length > 0 ? (
+                        paginatedData.map((row, rowIndex) => (
+                            <tr key={rowIndex}>
+                                {description.map((col, colIndex) => (
+                                    <td key={colIndex}>
+                                        {col.field
+                                            ? col.field({
+                                                  data: row,
+                                                  update: patch =>
+                                                      updateRow(
+                                                          row.id,
+                                                          prevRow => ({
+                                                              ...prevRow,
+                                                              ...patch,
+                                                          })
+                                                      ),
+                                              })
+                                            : row[col.name]}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td
+                                colSpan={description.length}
+                                style={{ textAlign: 'center' }}
+                            >
+                                No data available
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
             <div
