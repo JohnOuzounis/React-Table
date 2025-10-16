@@ -5,7 +5,7 @@ import { FaLongArrowAltDown, FaLongArrowAltUp } from 'react-icons/fa';
 import styles from './Table.module.css';
 
 export const Table = ({
-    description,
+    description = [],
     data,
     onNextPage,
     onPrevPage,
@@ -96,8 +96,10 @@ export const Table = ({
             setTableData(data);
         } else {
             const sorted = [...tableData].sort((a, b) => {
-                const valA = a[key];
-                const valB = b[key];
+                const conf = description.find(c => c.name === key);
+
+                const valA = conf.field ? conf.field({ data: a }) : a[key];
+                const valB = conf.field ? conf.field({ data: b }) : b[key];
 
                 if (valA == null) return 1;
                 if (valB == null) return -1;
