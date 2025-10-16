@@ -98,6 +98,10 @@ export const Table = ({
             const sorted = [...tableData].sort((a, b) => {
                 const conf = description.find(c => c.name === key);
 
+                if (conf.sort) {
+                    return conf.sort(a, b, direction);
+                }
+
                 const valA = conf.field ? conf.field({ data: a }) : a[key];
                 const valB = conf.field ? conf.field({ data: b }) : b[key];
 
