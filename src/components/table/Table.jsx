@@ -269,11 +269,15 @@ export const Table = ({
     };
 
     return (
-        <div className={`${styles.container} ${classNames.container || ''}`}>
-            <table className='table'>
-                <thead>{renderHeader()}</thead>
-                <tbody>{renderData()}</tbody>
-            </table>
+        <div className={`${styles.wrapper} ${classNames.wrapper || ''}`}>
+            <div
+                className={`${styles.container} ${classNames.container || ''}`}
+            >
+                <table className='table'>
+                    <thead>{renderHeader()}</thead>
+                    <tbody>{renderData()}</tbody>
+                </table>
+            </div>
             {loading && renderLoader()}
             {renderPagination()}
         </div>
