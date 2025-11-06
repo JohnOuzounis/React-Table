@@ -202,8 +202,8 @@ export const Table = ({
             for (let i = 1; i <= maxPagesToShow; i++) addPage(i);
 
             if (
-                currentPage > maxPagesToShow + 1 &&
-                currentPage < totalPages - maxPagesToShow
+                currentPage > maxPagesToShow &&
+                currentPage < totalPages - maxPagesToShow + 1
             ) {
                 pages.push(<span key='dots1'>...</span>);
                 addPage(currentPage);
@@ -212,7 +212,8 @@ export const Table = ({
                 pages.push(<span key='dots'>...</span>);
             }
 
-            for (let i = totalPages - 2; i <= totalPages; i++) addPage(i);
+            for (let i = totalPages - maxPagesToShow + 1; i <= totalPages; i++)
+                addPage(i);
         }
 
         return pages;
