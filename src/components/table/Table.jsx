@@ -15,6 +15,7 @@ export const Table = ({
     itemsPerPage = 7,
     classNames = {},
     loading = false,
+    resetPage = false,
 }) => {
     const [tableData, setTableData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -28,6 +29,12 @@ export const Table = ({
     useEffect(() => {
         setTableData(data);
     }, [data]);
+
+    useEffect(() => {
+        if (resetPage) {
+            setCurrentPage(1);
+        }
+    }, [resetPage]);
 
     const updateRow = (rowId, updater) => {
         setTableData(prev =>
